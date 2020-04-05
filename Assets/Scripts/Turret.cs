@@ -33,12 +33,7 @@ public class Turret : MonoBehaviour
         if (target == null)
             return;
 
-        //rotate - Target lock on
-        var direction = transform.position - target.transform.position;
-        var lookRotation = Quaternion.LookRotation(direction);
-        var rotation = Quaternion.Lerp(transform.rotation, lookRotation, Time.deltaTime * rotationSpeed).eulerAngles;
-        transform.rotation = Quaternion.Euler(0f, rotation.y, 0f);
-
+        TargetLockOn();
 
         if(fireCountdown <= 0f)
         {
@@ -47,20 +42,28 @@ public class Turret : MonoBehaviour
         }
     }
 
+    void TargetLockOn() 
+    {
+        //rotate - Target lock on
+        var direction = transform.position - target.transform.position;
+        var lookRotation = Quaternion.LookRotation(direction);
+        var rotation = Quaternion.Lerp(transform.rotation, lookRotation, Time.deltaTime * rotationSpeed).eulerAngles;
+        transform.rotation = Quaternion.Euler(0f, rotation.y, 0f);
+    }
+
     void UpdateTarget()
     {
         enemies = GameObject.FindGameObjectsWithTag(enemyTag).ToList();
-        //enemies.RemoveAll(enemy => enemy == null);
+        enemies.RemoveAll(enemy => enemy == null || !enemy.activeSelf);
 
-        
-
-        if (enemies.Count > 0 || (target != null && !target.activeSelf))
+        if (enemies.Count > 0)
         {
-            target = enemies[0];
+            var zxc = Vector3.Distance(transform.position, enemies[0].transform.position);
+            target = enemies.Find(enemy => Vector3.Distance(transform.position, enemy.transform.position) < range);
             //Enemy in range
-            var x = Vector3.Distance(target.transform.position, transform.position);
-            if (x > range)
-                target = null;
+            //var x = Vector3.Distance(target.transform.position, transform.position);
+            //if (x > range )
+            //    target = null;
         }
         else
             target = null;

@@ -6,6 +6,8 @@ TagManager:
   tags:
   - Waypoints
   - Enemy
+  - TerrainGroup
+  - TurretPanel
   layers:
   - Default
   - TransparentFX
